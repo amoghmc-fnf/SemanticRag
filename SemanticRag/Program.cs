@@ -37,6 +37,8 @@ namespace SemanticRag
             await collection.CreateCollectionIfNotExistsAsync();
 
             await GenerateEmbeddingsAndUpsertAsync(textEmbeddingService, collection);
+            // Azure AI Search takes a while to update.
+            Thread.Sleep(5 * 1000);
             await GenerateEmbeddingsAndSearchAsync(textEmbeddingService, collection);
 
         }
