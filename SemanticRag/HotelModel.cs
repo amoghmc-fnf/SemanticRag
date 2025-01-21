@@ -3,7 +3,7 @@
 public class Hotel
 {
     [VectorStoreRecordKey]
-    public ulong HotelId { get; set; }
+    public string HotelId { get; set; }
 
     [VectorStoreRecordData(IsFilterable = true)]
     public string HotelName { get; set; }
@@ -11,7 +11,7 @@ public class Hotel
     [VectorStoreRecordData(IsFullTextSearchable = true)]
     public string Description { get; set; }
 
-    [VectorStoreRecordVector(Dimensions: 4, DistanceFunction.CosineDistance, IndexKind.Hnsw)]
+    [VectorStoreRecordVector(Dimensions: 1536)]
     public ReadOnlyMemory<float>? DescriptionEmbedding { get; set; }
 
     [VectorStoreRecordData(IsFilterable = true)]
