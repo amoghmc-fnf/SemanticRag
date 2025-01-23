@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel.Connectors.AzureAISearch;
 using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
+using Microsoft.SemanticKernel.Data;
 using Microsoft.SemanticKernel.Embeddings;
 
 namespace SemanticRag
@@ -36,11 +37,29 @@ namespace SemanticRag
             // Create the collection if it doesn't exist yet.
             await collection.CreateCollectionIfNotExistsAsync();
 
+
             await GenerateEmbeddingsAndUpsertAsync(textEmbeddingService, collection);
             // Azure AI Search takes a while to update.
             Thread.Sleep(5 * 1000);
             await GenerateEmbeddingsAndSearchAsync(textEmbeddingService, collection);
 
+            await TextSearchWithVectorStore(textEmbeddingService, collection);
+        }
+
+        private static async Task TextSearchWithVectorStore(AzureOpenAITextEmbeddingGenerationService textEmbeddingService, IVectorStoreRecordCollection<string, Hotel> collection)
+        {
+            // Create a text search instance using the vector store record collection.
+            var textSearch = new VectorStoreTextSearch<Hotel>(collection, textEmbeddingService);
+
+            // Search and return results as TextSearchResult items
+            var query = "Top hotels?";
+            KernelSearchResults<TextSearchResult> textResults = await textSearch.GetTextSearchResultsAsync(query, new() { Top = 2, Skip = 0 });
+            Console.WriteLine("\n--- Text Search Results ---\n");
+            await foreach (TextSearchResult result in textResults.Results)
+            {
+                Console.WriteLine($"Name:  {result.Name}");
+                Console.WriteLine($"Value: {result.Value}");
+            }
         }
 
         public static async Task GenerateEmbeddingsAndUpsertAsync(ITextEmbeddingGenerationService textEmbeddingGenerationService, IVectorStoreRecordCollection<string, Hotel> collection)

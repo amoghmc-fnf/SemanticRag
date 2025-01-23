@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.VectorData;
+using Microsoft.SemanticKernel.Data;
 
 public class Hotel
 {
@@ -6,8 +7,10 @@ public class Hotel
     public string HotelId { get; set; }
 
     [VectorStoreRecordData(IsFilterable = true)]
+    [TextSearchResultName]
     public string HotelName { get; set; }
 
+    [TextSearchResultValue]
     [VectorStoreRecordData(IsFullTextSearchable = true)]
     public string Description { get; set; }
 
