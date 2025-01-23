@@ -3,8 +3,10 @@ using Azure.Search.Documents.Indexes;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.VectorData;
+using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.AzureAISearch;
 using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Data;
 using Microsoft.SemanticKernel.Embeddings;
 
@@ -43,10 +45,35 @@ namespace SemanticRag
             Thread.Sleep(5 * 1000);
             await GenerateEmbeddingsAndSearchAsync(textEmbeddingService, collection);
 
-            await TextSearchWithVectorStore(textEmbeddingService, collection);
+            //await TextSearch(textEmbeddingService, collection);
+
+            await TextSearchWithPluginAndFunctionCalling(configuration, textEmbeddingService, collection);
         }
 
-        private static async Task TextSearchWithVectorStore(AzureOpenAITextEmbeddingGenerationService textEmbeddingService, IVectorStoreRecordCollection<string, Hotel> collection)
+        private static async Task TextSearchWithPluginAndFunctionCalling(IConfigurationRoot configuration, AzureOpenAITextEmbeddingGenerationService textEmbeddingService, IVectorStoreRecordCollection<string, Hotel> collection)
+        {
+            // Create a kernel with OpenAI chat completion
+            IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
+            kernelBuilder.AddAzureOpenAIChatCompletion(
+                deploymentName: configuration["AzureOpenAiChat:DeploymentName"],
+                endpoint: configuration["AzureOpenAiChat:Endpoint"],
+                apiKey: configuration["AzureOpenAiChat:Key"]);
+            Kernel kernel = kernelBuilder.Build();
+
+            // Create a text search instance using the vector store record collection.
+            var textSearch = new VectorStoreTextSearch<Hotel>(collection, textEmbeddingService);
+
+            // Build a text search plugin with vector store search and add to the kernel
+            var searchPlugin = textSearch.CreateWithGetTextSearchResults("SearchPlugin");
+            kernel.Plugins.Add(searchPlugin);
+
+            // Invoke prompt and use text search plugin to provide grounding information
+            OpenAIPromptExecutionSettings settings = new() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() };
+            KernelArguments arguments = new(settings);
+            Console.WriteLine(await kernel.InvokePromptAsync("Show me your hotels?", arguments));
+        }
+
+        private static async Task TextSearch(AzureOpenAITextEmbeddingGenerationService textEmbeddingService, IVectorStoreRecordCollection<string, Hotel> collection)
         {
             // Create a text search instance using the vector store record collection.
             var textSearch = new VectorStoreTextSearch<Hotel>(collection, textEmbeddingService);
@@ -62,7 +89,7 @@ namespace SemanticRag
             }
         }
 
-        public static async Task GenerateEmbeddingsAndUpsertAsync(ITextEmbeddingGenerationService textEmbeddingGenerationService, IVectorStoreRecordCollection<string, Hotel> collection)
+        private static async Task GenerateEmbeddingsAndUpsertAsync(ITextEmbeddingGenerationService textEmbeddingGenerationService, IVectorStoreRecordCollection<string, Hotel> collection)
         {
             // Upsert a record.
             string descriptionText = "A place where everyone can be happy.";
@@ -83,7 +110,7 @@ namespace SemanticRag
             });
         }
 
-        public static async Task GenerateEmbeddingsAndSearchAsync(ITextEmbeddingGenerationService textEmbeddingGenerationService, IVectorStoreRecordCollection<string, Hotel> collection)
+        private static async Task GenerateEmbeddingsAndSearchAsync(ITextEmbeddingGenerationService textEmbeddingGenerationService, IVectorStoreRecordCollection<string, Hotel> collection)
         {
             // Upsert a record.
             string descriptionText = "Find me a hotel with happiness in mind.";
