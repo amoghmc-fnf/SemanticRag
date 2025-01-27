@@ -9,9 +9,15 @@ namespace OutlookPoc
         {
             Outlook.Application outlookApp = new Outlook.Application();
             Outlook.NameSpace outlookNamespace = outlookApp.GetNamespace("MAPI");
+            // Select the Inbox folder
             Outlook.MAPIFolder inboxFolder = outlookNamespace.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox);
-            Outlook.Items mailItems = inboxFolder.Items;
 
+            // Select a subfolder (replace "SubfolderName" with the actual subfolder name)
+            Outlook.MAPIFolder subFolder = inboxFolder.Folders["Test"];
+
+            // Print emails from the selected folder
+            Outlook.Items mailItems = subFolder.Items;
+            
             mailItems.Sort("[ReceivedTime]", true); // Sort by ReceivedTime from new to old 
             for (int i = 1; i <= 10 && i <= mailItems.Count; i++)
             {
