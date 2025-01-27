@@ -1,0 +1,30 @@
+﻿using System;
+using Outlook = Microsoft.Office.Interop.Outlook;
+
+namespace OutlookPoc
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Outlook.Application outlookApp = new Outlook.Application();
+            Outlook.NameSpace outlookNamespace = outlookApp.GetNamespace("MAPI");
+            Outlook.MAPIFolder inboxFolder = outlookNamespace.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox);
+            Outlook.Items mailItems = inboxFolder.Items;
+
+            mailItems.Sort("[ReceivedTime]", true); // Sort by ReceivedTime from new to old 
+            for (int i = 1; i <= 10 && i <= mailItems.Count; i++)
+            {
+                Outlook.MailItem item = mailItems[i] as Outlook.MailItem;
+                if (item != null)
+                {
+                    Console.WriteLine("Subject: " + item.Subject);
+                    Console.WriteLine("Body: " + item.Body);
+                    Console.WriteLine("Sender: " + item.SenderName);
+                    Console.WriteLine("Received: " + item.ReceivedTime.ToString());
+                    Console.WriteLine("-----------------------------------");
+                }
+            }
+        }
+    }
+}
