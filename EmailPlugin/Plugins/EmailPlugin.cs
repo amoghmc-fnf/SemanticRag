@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace EmailPlugin.Plugins
 {
-    internal class EmailPlugin
+    public class EmailPlugin
     {
+
     }
 }

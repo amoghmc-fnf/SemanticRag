@@ -40,10 +40,10 @@ namespace SemanticRag
             await collection.CreateCollectionIfNotExistsAsync();
 
 
-            await GenerateEmbeddingsAndUpsertAsync(textEmbeddingService, collection);
-            // Azure AI Search takes a while to update.
-            Thread.Sleep(5 * 1000);
-            await GenerateEmbeddingsAndSearchAsync(textEmbeddingService, collection);
+            //await GenerateEmbeddingsAndUpsertAsync(textEmbeddingService, collection);
+            // //Azure AI Search takes a while to update.
+            //Thread.Sleep(5 * 1000);
+            //await GenerateEmbeddingsAndSearchAsync(textEmbeddingService, collection);
 
             //await TextSearch(textEmbeddingService, collection);
 
@@ -64,13 +64,17 @@ namespace SemanticRag
             var textSearch = new VectorStoreTextSearch<Hotel>(collection, textEmbeddingService);
 
             // Build a text search plugin with vector store search and add to the kernel
-            var searchPlugin = textSearch.CreateWithGetTextSearchResults("SearchPlugin");
-            kernel.Plugins.Add(searchPlugin);
+            var testPlugin = new HotelPlugin(textSearch);
+            kernel.Plugins.AddFromObject(testPlugin, "HotelsPlugin");
+
+            // alternate way to add text search plugin
+            //var searchPlugin = textSearch.CreateWithGetTextSearchResults("HotelsTextSearch");
+            //kernel.Plugins.Add(searchPlugin);
 
             // Invoke prompt and use text search plugin to provide grounding information
             OpenAIPromptExecutionSettings settings = new() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() };
             KernelArguments arguments = new(settings);
-            Console.WriteLine(await kernel.InvokePromptAsync("Show me your hotels?", arguments));
+            Console.WriteLine(await kernel.InvokePromptAsync("Show me your top hotels?", arguments));
         }
 
         private static async Task TextSearch(AzureOpenAITextEmbeddingGenerationService textEmbeddingService, IVectorStoreRecordCollection<string, Hotel> collection)
