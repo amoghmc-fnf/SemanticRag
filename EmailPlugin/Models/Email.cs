@@ -32,5 +32,15 @@ namespace EmailPlugin.Models
 
         [VectorStoreRecordVector(Dimensions: 1536)]
         public ReadOnlyMemory<float>? Embedding { get; set; }
+
+        public override string ToString()
+        {
+            string separator = "```\n";
+            return $"{separator}From: {this.From}"
+                + $"{separator}To: {this.To}"
+                + $"{separator}Subject: {this.Subject}"
+                + $"{separator}Date: {this.Date.ToString()}"
+                + $"{separator}Body: {this.Body}";
+        }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Azure.Core.Extensions;
 using EmailPlugin.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.VectorData;
 using Microsoft.Office.Interop.Outlook;
+using Microsoft.SemanticKernel.Embeddings;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace EmailService.Services
@@ -10,15 +12,21 @@ namespace EmailService.Services
     {
         private const string PR_SMTP_ADDRESS = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
         private readonly IConfiguration _configuration;
-        private readonly Outlook.MAPIFolder _folder;
-        public OutlookService(IConfiguration configuration)
+        private Outlook.MAPIFolder _folder;
+        private ITextEmbeddingGenerationService _textEmbeddingGenerationService;
+        private IVectorStoreRecordCollection<string, Email> _collection;
+        public OutlookService(ITextEmbeddingGenerationService textEmbeddingGenerationService, 
+                IVectorStoreRecordCollection<string, Email> collection, 
+                IConfiguration configuration)
         {
             _configuration = configuration;
+            _collection = collection;
+            _textEmbeddingGenerationService = textEmbeddingGenerationService;
             MAPIFolder inboxFolder = InitializeOutlookFolder();
             _folder = inboxFolder.Folders[_configuration["Folder"]];
         }
 
-        private static MAPIFolder InitializeOutlookFolder()
+        private MAPIFolder InitializeOutlookFolder()
         {
             Outlook.Application outlookApp = new Outlook.Application();
             Outlook.NameSpace outlookNamespace = outlookApp.GetNamespace("MAPI");
@@ -28,7 +36,7 @@ namespace EmailService.Services
             return inboxFolder;
         }
 
-        public async Task<List<Email>> GetMailsFromOutlook(int count)
+        public async Task<List<Email>> GetMailsFromOutlook(int count = int.MaxValue)
         {
             Outlook.Items outlookMails = _folder.Items;
 
@@ -53,17 +61,29 @@ namespace EmailService.Services
             return emails;
         }
 
-        private static string GetSenderEmail(MailItem outlookMail)
+        private string GetSenderEmail(MailItem outlookMail)
         {
             Outlook.PropertyAccessor senderPropertyAccessor = outlookMail.Sender.PropertyAccessor;
             return senderPropertyAccessor.GetProperty(PR_SMTP_ADDRESS).ToString();
         }
 
-        private static string GetRecipientEmail(MailItem outlookMail)
+        private string GetRecipientEmail(MailItem outlookMail)
         {
             Outlook.Recipients recipients = outlookMail.Recipients;
             Outlook.PropertyAccessor recipientPropertyAccessor = recipients[1].PropertyAccessor;
             return recipientPropertyAccessor.GetProperty(PR_SMTP_ADDRESS).ToString();
+        }
+
+        public async Task GenerateEmbeddingsAndUpsertAsync(int count = int.MaxValue)
+        {
+            List<Email> emails = await GetMailsFromOutlook(count);
+
+            foreach (Email email in emails)
+            {
+                ReadOnlyMemory<float> embedding = await _textEmbeddingGenerationService.GenerateEmbeddingAsync(email.ToString());
+                email.Embedding = embedding;
+                await _collection.UpsertAsync(email);
+            }
         }
     }
 }
