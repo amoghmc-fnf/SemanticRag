@@ -12,11 +12,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutlookPoc", "OutlookPoc\OutlookPoc.csproj", "{9A1370FF-B122-4D15-B349-54977CA910F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailPlugin", "EmailPlugin\EmailPlugin.csproj", "{3E02DC61-D72E-4CB2-B8AB-A1CC3100839A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailLibrary", "EmailPlugin\EmailLibrary.csproj", "{3E02DC61-D72E-4CB2-B8AB-A1CC3100839A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailApi", "EmailApi\EmailApi.csproj", "{21C1EF11-07FB-4C67-A954-B1EE8BF5D385}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginExample", "..\SemanticKernel\PluginExample\PluginExample.csproj", "{6BEFFF40-6C83-46AF-B23E-365FA10D89EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService", "EmailService\EmailService.csproj", "{A355580F-6309-4696-B452-6892D11E4C1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernelService", "..\SemanticSummary\SemanticKernelService\SemanticKernelService.csproj", "{60587192-0EA5-4E3C-A9C1-C0945A2A9011}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernelApi", "..\SemanticSummary\SemanticKernelApi\SemanticKernelApi.csproj", "{F83824C0-A2AE-4418-95B0-74F58404D6E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins", "..\SemanticSummary\Plugins\Plugins.csproj", "{78C32989-F7E4-44C4-950F-76404F4D8E3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,10 +46,22 @@ Global
 		{21C1EF11-07FB-4C67-A954-B1EE8BF5D385}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21C1EF11-07FB-4C67-A954-B1EE8BF5D385}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21C1EF11-07FB-4C67-A954-B1EE8BF5D385}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6BEFFF40-6C83-46AF-B23E-365FA10D89EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6BEFFF40-6C83-46AF-B23E-365FA10D89EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6BEFFF40-6C83-46AF-B23E-365FA10D89EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6BEFFF40-6C83-46AF-B23E-365FA10D89EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A355580F-6309-4696-B452-6892D11E4C1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A355580F-6309-4696-B452-6892D11E4C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A355580F-6309-4696-B452-6892D11E4C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A355580F-6309-4696-B452-6892D11E4C1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60587192-0EA5-4E3C-A9C1-C0945A2A9011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60587192-0EA5-4E3C-A9C1-C0945A2A9011}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60587192-0EA5-4E3C-A9C1-C0945A2A9011}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60587192-0EA5-4E3C-A9C1-C0945A2A9011}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F83824C0-A2AE-4418-95B0-74F58404D6E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F83824C0-A2AE-4418-95B0-74F58404D6E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F83824C0-A2AE-4418-95B0-74F58404D6E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F83824C0-A2AE-4418-95B0-74F58404D6E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78C32989-F7E4-44C4-950F-76404F4D8E3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78C32989-F7E4-44C4-950F-76404F4D8E3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78C32989-F7E4-44C4-950F-76404F4D8E3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78C32989-F7E4-44C4-950F-76404F4D8E3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
