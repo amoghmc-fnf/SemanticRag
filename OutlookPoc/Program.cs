@@ -14,6 +14,7 @@ namespace OutlookPoc
 
             // Select a subfolder (replace "SubfolderName" with the actual subfolder name)
             Outlook.MAPIFolder subFolder = inboxFolder.Folders["Test"];
+            //subFolder = inboxFolder;
 
             // Print emails from the selected folder
             Outlook.Items mailItems = subFolder.Items;
@@ -26,7 +27,17 @@ namespace OutlookPoc
                 {
                     Console.WriteLine("Subject: " + item.Subject);
                     Console.WriteLine("Body: " + item.Body);
-                    Console.WriteLine("Sender: " + item.SenderName);
+                    const string PR_SMTP_ADDRESS = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
+                    Outlook.PropertyAccessor pas = item.Sender.PropertyAccessor;
+                    string ssmtpAddress = pas.GetProperty(PR_SMTP_ADDRESS).ToString();
+                    Console.WriteLine("Sender: " + ssmtpAddress);
+                    Outlook.Recipients recips = item.Recipients;
+                    foreach (Outlook.Recipient recip in recips)
+                    {
+                        Outlook.PropertyAccessor pa = recip.PropertyAccessor;
+                        string smtpAddress = pa.GetProperty(PR_SMTP_ADDRESS).ToString();
+                        Console.WriteLine("Receiver: " + smtpAddress);
+                    }
                     Console.WriteLine("Received: " + item.ReceivedTime.ToString());
                     Console.WriteLine("-----------------------------------");
                 }

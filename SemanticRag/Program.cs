@@ -74,7 +74,7 @@ namespace SemanticRag
             // Invoke prompt and use text search plugin to provide grounding information
             OpenAIPromptExecutionSettings settings = new() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() };
             KernelArguments arguments = new(settings);
-            Console.WriteLine(await kernel.InvokePromptAsync("Show me your top hotels?", arguments));
+            Console.WriteLine(await kernel.InvokePromptAsync("Show me your details of hotel with desc happy?", arguments));
         }
 
         private static async Task TextSearch(AzureOpenAITextEmbeddingGenerationService textEmbeddingService, IVectorStoreRecordCollection<string, Hotel> collection)
@@ -109,7 +109,6 @@ namespace SemanticRag
                 HotelId = hotelId,
                 HotelName = "Hotel Happy",
                 Description = descriptionText,
-                DescriptionEmbedding = embedding,
                 Tags = new[] { "luxury", "pool" }
             });
         }

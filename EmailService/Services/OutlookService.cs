@@ -8,6 +8,7 @@ namespace EmailService.Services
 {
     public class OutlookService
     {
+        private const string PR_SMTP_ADDRESS = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
         private readonly IConfiguration _configuration;
         private readonly Outlook.MAPIFolder _folder;
         public OutlookService(IConfiguration configuration)
@@ -27,24 +28,42 @@ namespace EmailService.Services
             return inboxFolder;
         }
 
-        public async Task<Email> GetAllMailsFromOutlook()
+        public async Task<List<Email>> GetMailsFromOutlook(int count)
         {
             Outlook.Items outlookMails = _folder.Items;
 
             // Sort by ReceivedTime from new to old 
-            outlookMails.Sort("[ReceivedTime]", true); 
+            outlookMails.Sort("[ReceivedTime]", true);
 
             List<Email> emails = new List<Email>();
-            for (int i = 1; i <= 10 && i <= outlookMails.Count; i++)
+            for (int i = 1; i <= count && i <= outlookMails.Count; i++)
             {
                 Outlook.MailItem outlookMail = outlookMails[i] as Outlook.MailItem;
                 if (outlookMail != null)
                 {
                     Email email = new Email();
-                    email.From = outlookMail.SenderEmailAddress;
-                    email.To = outlookMail.Rec
+                    email.From = GetSenderEmail(outlookMail);
+                    email.To = GetRecipientEmail(outlookMail);
+                    email.Subject = outlookMail.Subject;
+                    email.Body = outlookMail.Body;
+                    email.Date = outlookMail.ReceivedTime;
+                    emails.Add(email);
                 }
             }
+            return emails;
+        }
+
+        private static string GetSenderEmail(MailItem outlookMail)
+        {
+            Outlook.PropertyAccessor senderPropertyAccessor = outlookMail.Sender.PropertyAccessor;
+            return senderPropertyAccessor.GetProperty(PR_SMTP_ADDRESS).ToString();
+        }
+
+        private static string GetRecipientEmail(MailItem outlookMail)
+        {
+            Outlook.Recipients recipients = outlookMail.Recipients;
+            Outlook.PropertyAccessor recipientPropertyAccessor = recipients[1].PropertyAccessor;
+            return recipientPropertyAccessor.GetProperty(PR_SMTP_ADDRESS).ToString();
         }
     }
 }

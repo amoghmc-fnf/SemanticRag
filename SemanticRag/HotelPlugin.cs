@@ -23,12 +23,12 @@ namespace SemanticRag
         {
             List<Hotel> hotels = new();
             var query = "get all hotels";
-            KernelSearchResults<TextSearchResult> textResults = await _hotels.GetTextSearchResultsAsync(query);
-            await foreach (TextSearchResult result in textResults.Results)
+            KernelSearchResults<object> textResults = await _hotels.GetSearchResultsAsync(query);
+            await foreach (Hotel result in textResults.Results)
             {
                 Hotel h = new Hotel();
-                h.HotelName = "1" + result.Name;
-                h.Description = result.Value;
+                h.HotelName = result.HotelName;
+                h.Description = result.Description;
                 hotels.Add(h);
             }
             return hotels;

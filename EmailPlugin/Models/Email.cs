@@ -27,7 +27,10 @@ namespace EmailPlugin.Models
         [VectorStoreRecordData(IsFullTextSearchable = true)]
         public string Subject { get; set; }
 
-        [VectorStoreRecordVector(Dimensions: 1536)]
+        [VectorStoreRecordData]
         public string Body { get; set; }
+
+        [VectorStoreRecordVector(Dimensions: 1536)]
+        public ReadOnlyMemory<float>? Embedding { get; set; }
     }
 }
