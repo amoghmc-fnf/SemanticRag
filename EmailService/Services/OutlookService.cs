@@ -15,20 +15,21 @@ namespace EmailService.Services
         private Outlook.MAPIFolder _folder;
         private ITextEmbeddingGenerationService _textEmbeddingGenerationService;
         private IVectorStoreRecordCollection<string, Email> _collection;
+        private Outlook.Application _outlookApp;
         public OutlookService(ITextEmbeddingGenerationService textEmbeddingGenerationService, 
                 IVectorStoreRecordCollection<string, Email> collection, 
                 IConfiguration configuration)
         {
             _configuration = configuration;
             _collection = collection;
+            _outlookApp = new Outlook.Application();
             _textEmbeddingGenerationService = textEmbeddingGenerationService;
-            MAPIFolder inboxFolder = InitializeOutlookFolder();
+            MAPIFolder inboxFolder = InitializeOutlookFolder(_outlookApp);
             _folder = inboxFolder.Folders[_configuration["Folder"]];
         }
 
-        private MAPIFolder InitializeOutlookFolder()
+        private MAPIFolder InitializeOutlookFolder(Outlook.Application outlookApp)
         {
-            Outlook.Application outlookApp = new Outlook.Application();
             Outlook.NameSpace outlookNamespace = outlookApp.GetNamespace("MAPI");
 
             // Select the Inbox folder
@@ -50,6 +51,7 @@ namespace EmailService.Services
                 if (outlookMail != null)
                 {
                     Email email = new Email();
+                    email.Id = outlookMail.EntryID;
                     email.From = GetSenderEmail(outlookMail);
                     email.To = GetRecipientEmail(outlookMail);
                     email.Subject = outlookMail.Subject;
@@ -58,7 +60,7 @@ namespace EmailService.Services
                     emails.Add(email);
                 }
             }
-            return emails;
+            return await Task.FromResult(emails);
         }
 
         private string GetSenderEmail(MailItem outlookMail)
@@ -84,6 +86,32 @@ namespace EmailService.Services
                 email.Embedding = embedding;
                 await _collection.UpsertAsync(email);
             }
+        }
+
+        public async Task AddEmailAsync(Email email)
+        {
+            // Create a new mail item
+            Outlook.MailItem outlookMail = (Outlook.MailItem)_outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
+
+            outlookMail.To = email.To;
+            outlookMail.Subject = email.Subject;
+            outlookMail.Body = email.Body;
+            outlookMail.Move(_folder);
+        }
+
+        public async Task ReplyToEmailAsync(Email email)
+        {
+            // Get email by ID
+            Outlook.NameSpace outlookNamespace = _outlookApp.GetNamespace("MAPI");
+            Outlook.MailItem mail = (Outlook.MailItem)outlookNamespace.GetItemFromID(email.Id);
+
+            // Reply to the mail item
+            Outlook.MailItem reply = mail.Reply();
+
+            reply.To = email.To;
+            reply.Subject = email.Subject;
+            reply.Body = email.Body;
+            reply.Move(_folder);
         }
     }
 }

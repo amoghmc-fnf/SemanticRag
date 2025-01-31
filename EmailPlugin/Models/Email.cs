@@ -11,7 +11,7 @@ namespace EmailPlugin.Models
     public class Email
     {
         [VectorStoreRecordKey]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [VectorStoreRecordData(IsFilterable = true)]
         [EmailAddress]
