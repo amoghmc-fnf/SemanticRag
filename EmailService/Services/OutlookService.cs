@@ -1,5 +1,6 @@
 ﻿using Azure.Core.Extensions;
 using EmailPlugin.Models;
+using EmailService.Contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.VectorData;
 using Microsoft.Office.Interop.Outlook;
