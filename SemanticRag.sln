@@ -3,14 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35431.28
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticRag", "SemanticRag\SemanticRag.csproj", "{CD6A6397-AAE2-47F6-A0ED-C62C5F03B94C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{370295A5-AA74-42DA-ABB9-E8BB978FA69F}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutlookPoc", "OutlookPoc\OutlookPoc.csproj", "{9A1370FF-B122-4D15-B349-54977CA910F2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailLibrary", "EmailPlugin\EmailLibrary.csproj", "{3E02DC61-D72E-4CB2-B8AB-A1CC3100839A}"
 EndProject
@@ -30,14 +26,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CD6A6397-AAE2-47F6-A0ED-C62C5F03B94C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD6A6397-AAE2-47F6-A0ED-C62C5F03B94C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD6A6397-AAE2-47F6-A0ED-C62C5F03B94C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD6A6397-AAE2-47F6-A0ED-C62C5F03B94C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9A1370FF-B122-4D15-B349-54977CA910F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A1370FF-B122-4D15-B349-54977CA910F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9A1370FF-B122-4D15-B349-54977CA910F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9A1370FF-B122-4D15-B349-54977CA910F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E02DC61-D72E-4CB2-B8AB-A1CC3100839A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3E02DC61-D72E-4CB2-B8AB-A1CC3100839A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E02DC61-D72E-4CB2-B8AB-A1CC3100839A}.Release|Any CPU.ActiveCfg = Release|Any CPU
