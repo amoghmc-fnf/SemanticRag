@@ -8,7 +8,7 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace EmailService.Services
 {
-    public class OutlookService
+    public class OutlookService : IOutlookService
     {
         private const string PR_SMTP_ADDRESS = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
         private readonly IConfiguration _configuration;
@@ -16,14 +16,15 @@ namespace EmailService.Services
         private ITextEmbeddingGenerationService _textEmbeddingGenerationService;
         private IVectorStoreRecordCollection<string, Email> _collection;
         private Outlook.Application _outlookApp;
-        public OutlookService(ITextEmbeddingGenerationService textEmbeddingGenerationService, 
-                IVectorStoreRecordCollection<string, Email> collection, 
+
+        public OutlookService(ITextEmbeddingGenerationService textEmbeddingGenerationService,
+                IVectorStoreRecordCollection<string, Email> collection,
                 IConfiguration configuration)
         {
             _configuration = configuration;
             _collection = collection;
-            _outlookApp = new Outlook.Application();
             _textEmbeddingGenerationService = textEmbeddingGenerationService;
+            _outlookApp = new Outlook.Application();
             MAPIFolder inboxFolder = InitializeOutlookFolder(_outlookApp);
             _folder = inboxFolder.Folders[_configuration["Folder"]];
         }
