@@ -1,6 +1,8 @@
 using Azure;
 using Azure.Search.Documents.Indexes;
 using EmailPlugin.Models;
+using EmailService.Contracts;
+using EmailService.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel.Connectors.AzureAISearch;
@@ -26,6 +28,7 @@ namespace EmailApi
 
             // Add services to the container.
             AddAiServicesAsync(builder);
+            builder.Services.AddSingleton<IOutlookService, OutlookService>();
 
             // Configure cors.
             ConfigureCors(builder);
@@ -51,7 +54,7 @@ namespace EmailApi
             app.Run();
         }
 
-        private static async Task AddAiServicesAsync(WebApplicationBuilder builder)
+        private static void AddAiServicesAsync(WebApplicationBuilder builder)
         {
             var configuration = builder.Configuration;
 
@@ -72,8 +75,9 @@ namespace EmailApi
             // Choose a collection from the database and specify the type of key and record stored in it via Generic parameters.
             var collection = vectorStore.GetCollection<string, Email>(configuration["AzureAiSearch:EmailCollection"]);
             // Create the collection if it doesn't exist yet.
-            await collection.CreateCollectionIfNotExistsAsync();
+            //await collection.CreateCollectionIfNotExistsAsync();
             builder.Services.AddSingleton<IVectorStoreRecordCollection<string, Email>>(collection);
+            return;
         }
 
         /// <summary>

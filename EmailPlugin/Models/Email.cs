@@ -22,7 +22,7 @@ namespace EmailPlugin.Models
         public string To { get; set; } = string.Empty;
 
         [VectorStoreRecordData(IsFilterable = true)]
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
 
         [VectorStoreRecordData(IsFullTextSearchable = true)]
         public string Subject { get; set; }

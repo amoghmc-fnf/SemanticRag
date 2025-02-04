@@ -52,14 +52,21 @@ namespace EmailService.Services
                 Outlook.MailItem outlookMail = outlookMails[i] as Outlook.MailItem;
                 if (outlookMail != null)
                 {
-                    Email email = new Email();
-                    email.Id = outlookMail.EntryID;
-                    email.From = GetSenderEmail(outlookMail);
-                    email.To = GetRecipientEmail(outlookMail);
-                    email.Subject = outlookMail.Subject;
-                    email.Body = outlookMail.Body;
-                    email.Date = outlookMail.ReceivedTime;
-                    emails.Add(email);
+                    try
+                    {
+                        Email email = new Email();
+                        email.Id = outlookMail.EntryID;
+                        email.From = GetSenderEmail(outlookMail);
+                        email.To = GetRecipientEmail(outlookMail);
+                        email.Subject = outlookMail.Subject;
+                        email.Body = outlookMail.Body;
+                        email.Date = outlookMail.ReceivedTime.ToShortDateString();
+                        emails.Add(email);
+                    }
+                    catch 
+                    {
+                        continue;
+                    }
                 }
             }
             return await Task.FromResult(emails);
@@ -80,6 +87,7 @@ namespace EmailService.Services
 
         public async Task GenerateEmbeddingsAndUpsertAsync(int count = int.MaxValue)
         {
+            await _collection.CreateCollectionIfNotExistsAsync();
             List<Email> emails = await GetMailsFromOutlook(count);
 
             foreach (Email email in emails)
@@ -110,8 +118,8 @@ namespace EmailService.Services
             // Reply to the mail item
             Outlook.MailItem reply = mail.Reply();
 
-            reply.To = email.To;
-            reply.Subject = email.Subject;
+            reply.To = GetRecipientEmail(mail);
+            reply.Subject = "RE: " + mail.Subject;
             reply.Body = email.Body;
             reply.Move(_folder);
         }
