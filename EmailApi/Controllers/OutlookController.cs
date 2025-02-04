@@ -30,6 +30,17 @@ namespace EmailApi.Controllers
             return Ok();
         }
 
+        [HttpGet("search-embeddings")]
+        public async Task<ActionResult<List<Email>>> SearchEmails(string query, int top = 1, int skip = 0)
+        {
+            if (string.IsNullOrEmpty(query))
+            {
+                return BadRequest("Query cannot be empty.");
+            }
+            var emails = await _outlookService.GenerateEmbeddingsAndSearchAsync(query, top, skip);
+            return Ok(emails);
+        }
+
         [HttpPost("add-email")]
         public async Task<IActionResult> AddEmailAsync([FromBody] Email email)
         {

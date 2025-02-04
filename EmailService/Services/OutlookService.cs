@@ -98,6 +98,26 @@ namespace EmailService.Services
             }
         }
 
+        public async Task<List<Email>> GenerateEmbeddingsAndSearchAsync(string query, int top = 1, int skip = 0)
+        {
+            // Generate the embedding.
+            ReadOnlyMemory<float> searchEmbedding =
+                await _textEmbeddingGenerationService.GenerateEmbeddingAsync(query);
+
+            // Do the search, passing an options object with a Top value to limit resulst to the single top match.
+            var searchResult = await _collection.VectorizedSearchAsync(searchEmbedding, new() { Top = top, Skip = skip }); 
+
+            List<Email> emails = new List<Email>();
+            await foreach (var record in searchResult.Results)
+            {
+                if (record.Score > 0.8)
+                {
+                    emails.Add(record.Record);
+                }
+            }
+            return emails;
+        }
+
         public async Task AddEmailAsync(Email email)
         {
             // Create a new mail item
